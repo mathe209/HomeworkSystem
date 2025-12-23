@@ -1,6 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
+import Navbar from "../components/navbar";
 
 const API_BASE = "http://localhost:3000";
 
@@ -15,7 +18,8 @@ export default function CreateHomeworkPage() {
   const [answerFour, setAnswerFour] = useState("");
   const [answerFive, setAnswerFive] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const {me, loading} = useAuth();
+  if (loading) return <div>loading...</div>
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -60,7 +64,12 @@ export default function CreateHomeworkPage() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "0 auto" }}>
+    <>
+    <Navbar/>
+    <div className="container mt-20 mx-20">
+    <div className="">
+      <strong>{me ? `Signed in as: ${me.name}` : "Not signed in"}</strong>
+    </div>
       <h2>Create Homework</h2>
 
       <form onSubmit={handleSubmit}>
@@ -85,27 +94,27 @@ export default function CreateHomeworkPage() {
         <br /><br />
 
         <label>Answer 1</label>
-        <input value={answerOne} onChange={(e) => setAnswerOne(e.target.value)} required />
+        <input value={answerOne} onChange={(e) => setAnswerOne(e.target.value)} required  className='border border-black mx-5'/>
 
         <br /><br />
 
         <label>Answer 2</label>
-        <input value={answerTwo} onChange={(e) => setAnswerTwo(e.target.value)} required />
+        <input value={answerTwo} onChange={(e) => setAnswerTwo(e.target.value)} required className='border border-black mx-5'/>
 
         <br /><br />
 
         <label>Answer 3</label>
-        <input value={answerThree} onChange={(e) => setAnswerThree(e.target.value)} required />
+        <input value={answerThree} onChange={(e) => setAnswerThree(e.target.value)} required className='border border-black mx-5'/>
 
         <br /><br />
 
         <label>Answer 4</label>
-        <input value={answerFour} onChange={(e) => setAnswerFour(e.target.value)} required />
+        <input value={answerFour} onChange={(e) => setAnswerFour(e.target.value)} required className='border border-black mx-5'/>
 
         <br /><br />
 
         <label>Answer 5</label>
-        <input value={answerFive} onChange={(e) => setAnswerFive(e.target.value)} required />
+        <input value={answerFive} onChange={(e) => setAnswerFive(e.target.value)} required className='border border-black mx-5'/>
 
         <br /><br />
 
@@ -114,5 +123,6 @@ export default function CreateHomeworkPage() {
         </button>
       </form>
     </div>
+    </>
   );
 }

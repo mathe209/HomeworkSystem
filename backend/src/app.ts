@@ -216,6 +216,31 @@ AppDataSource.initialize().then(async () => {
         return res.sendFile(filePath);
     });
 
+    app.get("/teacher/show-homeworks", requireAuth, async (req: any, res) => {
+        try {
+        const teacherId = req.user.id;
+
+        const homeworkRepository = AppDataSource.getRepository(HomeWork);
+
+        const homeworks = await homeworkRepository.find({
+        where: {
+            teacher: { id: teacherId }, // filter by logged-in teacher
+         },
+         relations: {
+            mcqs: true, // include mcqs per homework
+        },
+        order: {
+            timeStamp: "DESC",
+        },
+        });
+        console.log(homeworks)
+        return res.json(homeworks);
+        } catch (error) {
+            console.error("Error fetching teacher homeworks:", error);
+            return res.status(500).json({ message: "Failed to fetch homeworks" });
+        }
+    });
+
 }).catch((error) => console.log("DB init error:", error));
 
 
