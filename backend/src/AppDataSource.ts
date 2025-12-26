@@ -1,6 +1,8 @@
 import {DataSource} from "typeorm";
 import { HomeWork, Student, Teacher, User } from "./entities";
 import { CreateMCQ } from "./entity2";
+import { HomeworkSubmission } from "./HomeworkSubmission";
+import { MCQAnswer } from "./MCQAnswer";
 
 export const AppDataSource = new DataSource({
     type: "mysql",
@@ -11,7 +13,7 @@ export const AppDataSource = new DataSource({
     database: "homework",
     synchronize: true,
     logging: true,
-    entities: [User, HomeWork, CreateMCQ, Teacher, Student],
+    entities: [User, HomeWork, CreateMCQ, Teacher, Student, HomeworkSubmission, MCQAnswer],
     migrations: [],
     subscribers: [],
 });

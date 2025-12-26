@@ -7,5 +7,5 @@ export async function getMe() {
   const res = await axios.get(`${API_BASE}/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res.data as { id: number; name: string; email: string };
+  return res.data as { id: number; name: string; email: string, role: string, grade?: string } | null;
 }

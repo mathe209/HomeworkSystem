@@ -4,7 +4,7 @@ import axios from "axios";
 
 const logUser = async (fullName:string, schoolName:string, schoolGrade:string, Password:string) => {
   try {
-    const response = await axios.post("http://localhost3000/SignIn", {
+    const response = await axios.post("http://localhost:3000/SignIn", {
       fullName: fullName,
       schoolName: schoolName,
       schoolGrade: schoolGrade,
@@ -36,7 +36,7 @@ const LogUser = () => {
     const form = e.target;
     const fullName = form.fullName.value.trim();
     const schoolName = form.schoolName.value.trim();
-    const schoolGrade = form.schoolCode.value.trim();
+    const schoolGrade = form.schoolGrade.value.trim();
     const Password = form.Password.value.trim();
 
     // Basic validation
@@ -54,7 +54,7 @@ const LogUser = () => {
       console.log("Registration response:", response);
       form.reset();
       // Or redirect if needed:
-      navigate("/success");
+      navigate("/LogLearnerIn");
     } catch (error:any) {
       console.error("Registration error:", error);
       alert(error.message || "Error registering user. Please check your information and try again.");

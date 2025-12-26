@@ -12,8 +12,11 @@ const jwt =  require('jsonwebtoken');
 
 import { User, HomeWork, Student, Teacher} from "./entities";
 import { CreateMCQ } from "./entity2";
+import { HomeworkSubmission } from "./HomeworkSubmission";
+import { MCQAnswer } from "./MCQAnswer";
 import { requireAuth } from "./middleware";
 import cookieParser from "cookie-parser";
+import { use } from "react";
 
 const bcrypt = require('bcrypt');
 
@@ -83,7 +86,7 @@ AppDataSource.initialize().then(async () => {
 
     app.post("/homework/mcq", async (req, res) => {
         try {
-            const { question, optionA, optionB, optionC, optionD, optionE, correctOption, homeworkId } = req.body;
+            const { grade, subject, question, optionA, optionB, optionC, optionD, optionE, correctOption, homeworkId } = req.body;
             // const homework = await homeworkRepository.findOneBy({ id: activityID });
             // if (!homework) {
             //     return res.status(401).json({ message: "Homework not found" });
@@ -91,6 +94,7 @@ AppDataSource.initialize().then(async () => {
             //     console.log("Home Work Created:", homework);
             // }
             const mcq = mcqRepository.create({
+                grade: grade,
                 question: question,
                 optionA: optionA,
                 optionB: optionB,
@@ -126,6 +130,7 @@ AppDataSource.initialize().then(async () => {
                 name: fullName,
                 school: schoolName,
                 grade: schoolGrade,
+                role: 'student',
                 password: hashedPassword
             });
             await LearnerRepository.save(student);
@@ -155,10 +160,11 @@ AppDataSource.initialize().then(async () => {
                 school: schoolName,
                 email: email,
                 password: hashedPassword,
+                role: 'teacher',
                 homeworks: []
             });
             await TeacherRepository.save(teacher);
-            res.status(201).json({ message: "User registered successfully", student: teacher });
+            res.status(201).json({ message: "User registered successfully", teacher: teacher });
         } catch (error) {
             console.error("Error registering user:", error);
             res.status(500).json({ message: "Error registering user" });
@@ -186,7 +192,7 @@ AppDataSource.initialize().then(async () => {
         }
         // 4) Create token (include name so you can display it)
         const token = jwt.sign(
-            { id: user.id, name: user.name, email: user.email },
+            { id: user.id, name: user.name, email: user.email, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "2h" }
         );
@@ -199,14 +205,28 @@ AppDataSource.initialize().then(async () => {
         return res.json({ success: true, token });
     });
 
-    
-    interface AuthRequest extends ExRequest {
-      user?: { id: number; name: string; email: string };
+
+    app.get("/me", requireAuth, (req, res) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Not authenticated" });
     }
 
-    app.get("/me", requireAuth, async (req, res) => {
-      if (!req.user) return res.status(401).json({ message: "Not authenticated" });
-      return res.json({ id: req.user.id, name: req.user.name, email: req.user.email });
+    if (req.user.role === "teacher") {
+        return res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        role: "teacher",
+        });
+    }
+
+    // student
+    return res.json({
+        id: req.user.id,
+        name: req.user.name,
+        grade: req.user.grade,
+        role: "student",
+    });
     });
 
     app.get("/sendTeacherFile", requireAuth1, (req, res) => {
@@ -241,6 +261,178 @@ AppDataSource.initialize().then(async () => {
         }
     });
 
+        app.post("/LoginLearner", async (req, res) => {
+        const userRepo = AppDataSource.getRepository(Student);
+        const { name, password } = req.body;
+        // 1) Basic validation
+        if (!name || !password) {
+            return res.status(400).json({ message: "name and password are required" });
+        }
+        // 2) Find user
+        const user = await userRepo.findOne({ where: { name } });
+        console.log("REGISTER password:", JSON.stringify(password));
+        console.log("REGISTER length:", password.length);
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+        // 3) Compare password with bcrypt
+        const ok = await bcrypt.compare(password, user.password);
+        if (!ok) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+        // 4) Create token (include name so you can display it)
+        const token = jwt.sign(
+            { id: user.id, name: user.name, role: user.role, grade: user.grade },
+            process.env.JWT_SECRET,
+            { expiresIn: "2h" }
+        );
+        res.cookie("auth_token", token, {
+            httpOnly: true,
+            secure: false,      // true in production (HTTPS)
+            sameSite: "lax",    // use "none" + secure:true if frontend is on a different site
+            maxAge: 2 * 60 * 60 * 1000, // 2 hours
+        });
+        return res.json({ success: true, token });
+    });
+
+    app.get("/homework/:homeworkId", requireAuth, async (req, res) => {
+        try {
+            if (!req.user || !req.user.grade) {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+
+            const studentGrade = req.user.grade;
+
+            const homeworkId = Number(req.params.homeworkId);
+            if (Number.isNaN(homeworkId)) {
+                return res.status(400).json({ message: "Invalid homeworkId" });
+            }
+
+            const mcqs = await mcqRepository.find({
+                where: {
+                    homework: {
+                        id: homeworkId,
+                    },
+                    grade: studentGrade,
+                    
+                },
+                relations: ["homework"], // 🔑 REQUIRED
+            });
+
+            if (mcqs.length === 0) {
+                return res.status(404).json({ message: "No homework found" });
+            }
+
+            console.log("Homework MCQs:", mcqs.length);
+            return res.json(mcqs);
+
+        } catch (error) {
+            console.error("Error fetching homework:", error);
+            return res.status(500).json({ message: "Failed to fetch homework" });
+        }
+    });
+
+    app.post("/homework/submit", requireAuth, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const studentId = req.user.id;
+        const { homeworkId, answers } = req.body;
+
+        const mcqRepo = AppDataSource.getRepository(CreateMCQ);
+        const submissionRepo = AppDataSource.getRepository(HomeworkSubmission);
+        
+        const duplicateSubmission = await submissionRepo.findOne({
+        where: {
+            homework: { id: homeworkId },
+            student: { id: studentId },
+        },
+        });
+        if (duplicateSubmission) {
+        console.log("Duplicate submission attempt for student:", studentId, "homework:", homeworkId);
+        return res.status(400).json({ message: "Homework already submitted" });
+        } 
+
+        // 1️⃣ Load MCQs for that homework
+        const mcqs = await mcqRepo.find({
+        where: { homework: { id: homeworkId } },
+        });
+
+        if (mcqs.length === 0) {
+        return res.status(400).json({ message: "No MCQs found for homework" });
+        }
+
+        const total = mcqs.length;
+
+        // 2️⃣ Grade
+        let correct = 0;
+
+        for (const mcq of mcqs) {
+        const studentAnswer = answers.find(
+            (a:any) => a.mcqId === mcq.id
+        );
+
+        if (studentAnswer && studentAnswer.answer === mcq.correctOption) {
+            correct++;
+        }
+        }
+
+        const score = correct; // simple scoring
+
+        // 3️⃣ Save submission WITH VALUES
+        const submission = submissionRepo.create({
+        total,
+        correct,
+        score,
+        student: { id: studentId },
+        homework: { id: homeworkId },
+        });
+
+        await submissionRepo.save(submission);
+
+        // 4️⃣ Return grade immediately
+        res.json({
+        total,
+        correct,
+        score,
+        });
+    } catch (err) {
+        console.error("Homework submit error:", err);
+        res.status(500).json({ message: "Failed to submit homework" });
+    }
+    });     
+
+    app.get("/homework/:homeworkId/grade", requireAuth, async (req, res) => {
+        try {
+            if (!req.user || req.user.role !== "student") {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+
+            const submissionRepo =
+                AppDataSource.getRepository(HomeworkSubmission);
+
+            const submission = await submissionRepo.findOne({
+                where: {
+                    homework: { id: Number(req.params.homeworkId) },
+                    student: { id: req.user.id },
+                },
+            });
+
+            if (!submission) {
+                return res.status(404).json({ message: "No submission found" });
+            }
+
+            return res.json({
+                score: submission.score,
+                correct: submission.correct,
+                total: submission.total,
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Failed to load grade" });
+        }
+    });
 }).catch((error) => console.log("DB init error:", error));
 
 

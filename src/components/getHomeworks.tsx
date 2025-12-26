@@ -30,7 +30,7 @@ export default function TeacherContent() {
       <div>
         {homeworks.map((hw) => (
           <div key={hw.id} style={{ border: "1px solid #ddd", marginBottom: 12, padding: 12 }}>
-            <h3>{hw.subject}</h3>
+            <h3>{"Subject: " + hw.subject}, {"Homework ID: " + hw.id}, {"Created at: " + hw.timeStamp}</h3>
             <p>Questions: {hw.mcqs?.length ?? 0}</p>
 
             <div>

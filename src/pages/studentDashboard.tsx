@@ -22,7 +22,7 @@ export default function StudentDashboard() {
               <h2 className="text-xl font-bold mb-2">Existing User?</h2>
                 <p className="mb-4">Log in to view your assignments and track your progress.</p>
                 <section className="mb-4">
-                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => window.location.href = '/login'}>Log In</button>
+                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => window.location.href = '/LogLearnerIn'}>Log In</button>
                 </section>
             </div>
 

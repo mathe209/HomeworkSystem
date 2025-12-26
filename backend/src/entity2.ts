@@ -5,7 +5,10 @@ import { HomeWork } from "./entities";
 export class CreateMCQ {
   @PrimaryGeneratedColumn()
   id!: number;
-
+  
+  @Column()
+  grade!: string;
+  
   @Column()
   question!: string;
 

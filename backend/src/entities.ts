@@ -24,6 +24,8 @@ export class Teacher {
     
     @Column()
     email!: string;
+    @Column({default: 'teacher'})
+    role!: string;
     
     @Column({ type: 'varchar', length: 255 })
     password!: string;
@@ -41,6 +43,8 @@ export class Student {
     school!: string;
     @Column()
     grade!: string;
+    @Column({default: 'student'})
+    role!: string;
     @Column({type: 'varchar', length: 255})
     password!: string;
 

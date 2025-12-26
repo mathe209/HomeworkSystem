@@ -10,8 +10,11 @@ import TeacherHeader from './pages/teacherContent.tsx'
 import CreateHomeworkPage from './pages/createHomework.tsx'
 import CreateMcqPage from './pages/Create-mcq.tsx'
 import ShowHomeworks from './pages/manageHomeworks.tsx'
+import LogLearnerIn from './pages/LogLearnerIn.tsx'
+import StudentContentPage from './pages/studentContent.tsx'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from "./contexts/AuthContext";
+
 
 function App() {
 
@@ -31,6 +34,8 @@ function App() {
         <Route path='/homeworkPage' element={<CreateHomeworkPage/>}/>
         <Route path='/create-mcq/:homeworkId' element={<CreateMcqPage/>}/>
         <Route path='/manageHomeworks' element={<ShowHomeworks />}/>
+        <Route path='/LogLearnerIn' element={<LogLearnerIn />} />
+        <Route path='/studentContent' element={<StudentContentPage />} />
       </Routes>
     </Router>
     </AuthProvider>

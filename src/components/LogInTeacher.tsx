@@ -9,7 +9,45 @@ export default function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const {setMe} = useAuth();
-  type Me = { id: number; name: string; email: string };
+  type BaseUser = {
+    id: number;
+    name: string;
+    role: "teacher" | "student";
+  };
+
+  type Teacher = BaseUser & {
+    role: "teacher";
+    email: string;
+  };
+
+  type Student = BaseUser & {
+    role: "student";
+    grade: string;
+  };
+
+  type User = Teacher | Student;
+
+  function isUser(data: any): data is User {
+    if (!data || typeof data !== "object") return false;
+
+    if (data.role === "student") {
+      return (
+        typeof data.id === "number" &&
+        typeof data.name === "string" &&
+        typeof data.grade === "string"
+      );
+    }
+
+    if (data.role === "teacher") {
+      return (
+        typeof data.id === "number" &&
+        typeof data.name === "string" &&
+        typeof data.email === "string"
+      );
+    }
+
+    return false;
+  }
   const handleSubmit = async (e:any) => {
     e.preventDefault();
 
@@ -26,19 +64,26 @@ export default function LoginForm() {
         password,
       });
 
-      console.log(response.data);
+      console.log("this is the data from the response: " + response.data);
 
       if (response.data.success) {
-      const { token } = response.data;
-      //get the current logged user
-      localStorage.setItem("token", token);
-      const meRes = await axios.get<Me>("http://localhost:3000/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setMe(meRes.data)
-      alert("Login successful");
-      e.target.reset(); // clear form
-      navigate("/teacherContent"); // redirect to content page
+        const { token } = response.data;
+        //get the current logged user
+        localStorage.setItem("token", token);
+        console.log("Stored token:", token);
+        const meRes = await axios.get("http://localhost:3000/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (isUser(meRes.data)) {
+          setMe(meRes.data);
+        } else {
+          console.error("Unexpected /me shape:", meRes.data);
+          setMe(null);
+          alert("Login succeeded but user data is invalid.");
+        }
+        alert("Login successful");
+        e.target.reset(); // clear form
+        navigate("/teacherContent"); // redirect to content page
       } else {
         alert(response.data.message || "Invalid credentials");
       }

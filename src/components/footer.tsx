@@ -7,3 +7,5 @@ export default function Footer() {
       </footer>
     );
   }
+
+  // https://chatgpt.com/share/694bad32-6054-8005-aae9-b865b8974aec
