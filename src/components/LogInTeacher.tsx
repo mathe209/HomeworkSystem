@@ -68,6 +68,7 @@ export default function LoginForm() {
 
       if (response.data.success) {
         const { token } = response.data;
+
         //get the current logged user
         localStorage.setItem("token", token);
         console.log("Stored token:", token);
@@ -87,9 +88,14 @@ export default function LoginForm() {
       } else {
         alert(response.data.message || "Invalid credentials");
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response.status === 401 || error.response.status === 400) {
       console.error("Error logging in:", error);
-      alert("Something went wrong. Please try again.");
+      alert("Invalid email or password.");
+      } else {
+        console.error("Error logging in:", error);
+        alert("An error occurred. Please try again later.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +103,8 @@ export default function LoginForm() {
 
   return (
     <>
-    <h1 className="p-2 mb-2 text-xl font-bold text-center text-white bg-gray-800 rounded-t-lg border-b border-gray-200 sm:text-4xl">Use your full name and school code to login, and access your content</h1>
+    <div className="border border-gray-400 p-5 rounded-lg bg-gray-100 max-w-2xl mx-auto">
+    <h1 className="p-2 mb-2 text-xl text-center text-white bg-gray-800 rounded-t-lg border-b border-gray-200 sm:text-4xl">Use your email and password to login, and access your content</h1>
     <form onSubmit={handleSubmit} className="flex flex-col space-y-4 w-full">
       <input
         type="email"
@@ -116,11 +123,12 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="p-3 text-white bg-blue-600 rounded-lg disabled:opacity-50"
+        className="p-3 text-white bg-blue-500 rounded-lg disabled:opacity-50 hover:bg-blue-800"
       >
         {isSubmitting ? "Logging in..." : "Login"}
       </button>
     </form>
+    </div>
     </>
   );
 }

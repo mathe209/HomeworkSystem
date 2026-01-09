@@ -23,15 +23,15 @@ export default function TeacherContent() {
 
   return (
     <>
-      <div className="mt-15 mx-10">
-        <h2>{me ? `Signed in as ${me.name}` : `Not signed in`}</h2>
+      <div className="my-2 mx-10">
+        <h2 className="text-gray-600 font-bold text-sm">{me ? `Signed in as ${me.name}` : `Not signed in`}</h2>
       </div>
 
-      <div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {homeworks.map((hw) => (
-          <div key={hw.id} style={{ border: "1px solid #ddd", marginBottom: 12, padding: 12 }}>
-            <h3>{"Subject: " + hw.subject}, {"Homework ID: " + hw.id}, {"Created at: " + hw.timeStamp}</h3>
-            <p>Questions: {hw.mcqs?.length ?? 0}</p>
+          <div key={hw.id} className="border border-gray-300 rounded-lg p-4 mb-4 shadow-md">
+            <h3 className="text-green-600 font-bold text-lg p-2">{"Subject: " + hw.subject}<br></br>{"Homework ID: " + hw.id}<br></br>{"Created at: " + hw.timeStamp}</h3>
+            <p className="text-gray-600 font-bold text-sm p-2">Questions: {hw.mcqs?.length ?? 0}</p>
 
             <div>
               {hw.mcqs?.map((mcq: any) => (
@@ -50,6 +50,13 @@ export default function TeacherContent() {
             </div>
           </div>
         ))}
+      </div>
+      <div className="mb-5">
+        <button className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-red-600" onClick={async () => {window.location.href="/teacherContent"}}>Create New Homework</button>
+        <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" onClick={() => {
+          localStorage.removeItem("token");
+          window.location.href = '/';
+        }}>Log Out</button>
       </div>
     </>
   );

@@ -15,7 +15,7 @@ export default function StudentDashboard() {
               <h2 className="text-xl font-bold mb-2">New User?</h2>
                 <p className="mb-4">If you are a new student, please refer to the instructions on the home page to get started.</p>
                 <section className="mb-4">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => window.location.href = '/SignIn'}>Sign Up</button>
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => window.location.href = '/SignInLearner'}>Sign Up</button>
                 </section>
             </div>
             <div className="p-5 m-2 border border-gray-400 rounded">

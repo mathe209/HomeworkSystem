@@ -11,12 +11,13 @@ import "dotenv/config";
 const jwt =  require('jsonwebtoken');
 
 import { User, HomeWork, Student, Teacher} from "./entities";
-import { CreateMCQ } from "./entity2";
+import { CreateMCQ, Membership, Mentorship } from "./entity2";
 import { HomeworkSubmission } from "./HomeworkSubmission";
 import { MCQAnswer } from "./MCQAnswer";
 import { requireAuth } from "./middleware";
 import cookieParser from "cookie-parser";
 import { use } from "react";
+import { o } from "framer-motion/dist/types.d-DagZKalS";
 
 const bcrypt = require('bcrypt');
 
@@ -236,6 +237,7 @@ AppDataSource.initialize().then(async () => {
         return res.sendFile(filePath);
     });
 
+    //endpoint responsible for fetching homework data to be show to teachers
     app.get("/teacher/show-homeworks", requireAuth, async (req: any, res) => {
         try {
         const teacherId = req.user.id;
@@ -350,8 +352,8 @@ AppDataSource.initialize().then(async () => {
         },
         });
         if (duplicateSubmission) {
-        console.log("Duplicate submission attempt for student:", studentId, "homework:", homeworkId);
-        return res.status(400).json({ message: "Homework already submitted" });
+            console.log("Duplicate submission attempt for student:", studentId, "homework:", homeworkId);
+            return res.status(400).json({ message: "Homework already submitted" });
         } 
 
         // 1️⃣ Load MCQs for that homework
@@ -360,7 +362,7 @@ AppDataSource.initialize().then(async () => {
         });
 
         if (mcqs.length === 0) {
-        return res.status(400).json({ message: "No MCQs found for homework" });
+            return res.status(404).json({ message: "No MCQs found for homework" });
         }
 
         const total = mcqs.length;
@@ -433,7 +435,111 @@ AppDataSource.initialize().then(async () => {
             return res.status(500).json({ message: "Failed to load grade" });
         }
     });
+
+    //routes showing teachers the results of their learners
+    app.get("/teacher/learner-results/:homeworkId", requireAuth, async (req, res) => {
+        try {
+            if (!req.user || req.user.role !== "teacher") {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+            const homeworkId = Number(req.params.homeworkId);
+            const submissionRepo =AppDataSource.getRepository(HomeworkSubmission);
+            const submissions = await submissionRepo.find({
+                where: {
+                    homework: { 
+                        id: homeworkId,
+                        teacher:{
+                            id: req.user.id
+                        }
+                    }
+                },
+                relations: {
+                    student: true,
+                    homework: true,
+                },
+            });
+            return res.json(submissions);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Failed to load learner results" });
+        }
+    });
+
+    app.get("/LearnerResults", requireAuth, async (req, res) => {
+        try {
+            if (!req.user || req.user.role !== "student") {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+            const submissionRepo =AppDataSource.getRepository(HomeworkSubmission);
+            const learner = await submissionRepo.find({
+                where: {
+                    student: { id: req.user.id },
+                },
+                relations: {
+                    homework: true,
+                },
+            });
+            if (!learner) return res.status(404).json({ message: "No results found" });
+            return res.json(learner);
+        }catch (err) {
+            console.error(err);
+            return res.status(500).json({ message: "Failed to load results" });
+        }
+    });
+
+    app.post("/mentorship", async (req, res) => {
+        try {
+            const { mentorType, name, email, phone, message } = req.body;
+            const mentorshipRepository = AppDataSource.getRepository(Mentorship);
+            
+            const existingUser = await mentorshipRepository.findOneBy({ name:name, email: email });
+
+            if (existingUser) {
+                return res.status(409).json({ message: "This name and email is already registered. Please use a different email." });
+            }
+
+            const mentorship = mentorshipRepository.create({
+                mentorType,
+                name,
+                email,
+                phone,
+                message,
+            });
+            await mentorshipRepository.save(mentorship);
+            res.status(201).json({ message: "Mentorship request submitted successfully", mentorship: mentorship });
+        }
+        catch (error) {
+            console.error("Error submitting mentorship request:", error);
+            res.status(500).json({ message: "Error submitting mentorship request" });
+        }
+    });
+
+    app.post("/membership", async (req, res) => {
+        try {
+            const { memberType, name, email, phone, userQuery, message } = req.body;
+            const membershipRepository = AppDataSource.getRepository(Membership);
+            const membership = membershipRepository.create({
+                memberType,
+                name,
+                email,
+                phone,
+                userQuery,
+                message,
+            });
+            
+            const existingUser = await membershipRepository.findOneBy({ email: email });
+
+            if (existingUser) {
+                return res.status(409).json({ message: "This email is already registered as a member." });
+            }
+
+            await membershipRepository.save(membership);
+            res.status(201).json({ message: "Membership request submitted successfully", membership: membership });
+        }
+        catch (error) {
+            console.error("Error submitting membership request:", error);
+            res.status(500).json({ message: "Error submitting membership request" });
+        }
+    });
+
 }).catch((error) => console.log("DB init error:", error));
-
-
-

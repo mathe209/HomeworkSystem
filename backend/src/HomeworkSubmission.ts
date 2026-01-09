@@ -6,8 +6,9 @@ import {
     OneToMany,
     CreateDateColumn,
     Column,
+    OneToOne,
 } from "typeorm";
-import { Student } from "./entities";
+import { Student, Teacher } from "./entities";
 import { HomeWork } from "./entities";
 import { MCQAnswer } from "./MCQAnswer";
 
@@ -33,6 +34,6 @@ export class HomeworkSubmission {
     @Column("float")
     score!: number; // percentage
 
-    @CreateDateColumn()
+    @CreateDateColumn({type: 'datetime'})
     submittedAt!: Date;
 }

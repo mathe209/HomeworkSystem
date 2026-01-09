@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne, Index, CreateDateColumn } from "typeorm";
 import { CreateMCQ } from "./entity2";
+import { i } from "framer-motion/dist/types.d-DagZKalS";
 
 @Entity()
 export class User {
@@ -23,6 +24,7 @@ export class Teacher {
     school!: string;
     
     @Column()
+    @Index()
     email!: string;
     @Column({default: 'teacher'})
     role!: string;
@@ -41,6 +43,7 @@ export class Student {
     name!: string;
     @Column()
     school!: string;
+    @Index()
     @Column()
     grade!: string;
     @Column({default: 'student'})
@@ -55,13 +58,13 @@ export class HomeWork {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @Index()
     @Column()
     subject!: string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: "datetime" })
     timeStamp!: Date;
 
-    // Answer columns (add as many as needed)
     @Column()
     AnswerOne!: string;
 
@@ -77,8 +80,11 @@ export class HomeWork {
     @Column()
     AnswerFive!: string;
 
-    // FK column stored in homework.teacherId
-    @ManyToOne(() => Teacher, (t) => t.homeworks, { nullable: false, onDelete: "CASCADE" })
+    // Each homework belongs to ONE teacher
+    @ManyToOne(() => Teacher, (teacher) => teacher.homeworks, {
+        nullable: false,
+        onDelete: "CASCADE",
+    })
     @JoinColumn({ name: "teacherId" })
     teacher!: Teacher;
 

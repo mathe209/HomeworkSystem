@@ -67,29 +67,29 @@ export default function LoginLearner() {
         console.log("this is the data from the response: " + response.data);
 
         if (response.data.success) {
-        const { token } = response.data;
-        //get the current logged user
-        localStorage.setItem("token", token);
-        console.log("Stored token:", token);
-        const meRes = await axios.get("http://localhost:3000/me", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (isUser(meRes.data)) {
-            setMe(meRes.data);
-        } else {
-            console.error("Unexpected /me shape:", meRes.data);
-            setMe(null);
-            alert("Login succeeded but user data is invalid.");
-        }
-        alert("Login successful");
-        e.target.reset(); // clear form
-        navigate("/studentContent"); // redirect to content page
+            const { token } = response.data;
+            //get the current logged user
+            localStorage.setItem("token", token);
+            console.log("Stored token:", token);
+            const meRes = await axios.get("http://localhost:3000/me", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (isUser(meRes.data)) {
+                setMe(meRes.data);
+            } else {
+                console.error("Unexpected /me shape:", meRes.data);
+                setMe(null);
+                alert("Login succeeded but user data is invalid.");
+            }
+            alert("Login successful");
+            e.target.reset(); // clear form
+            navigate("/studentContent"); // redirect to content page
         } else {
             alert(response.data.message || "Invalid credentials");
         }
-        } catch (error) {
-        console.error("Error logging in:", error);
-        alert("Something went wrong. Please try again.");
+        } catch (error:any) {
+            if (error.response.status === 401) alert("Error: " + error.response.data.message);
+            else alert("Request failed");
         } finally {
         setIsSubmitting(false);
         }
@@ -97,7 +97,8 @@ export default function LoginLearner() {
 
     return (
         <>
-        <h1 className="p-2 mb-2 text-xl font-bold text-center text-white bg-gray-800 rounded-t-lg border-b border-gray-200 sm:text-4xl">Use your full name and school code to login, and access your content</h1>
+        <div className="border border-gray-400 p-5 rounded-lg bg-gray-100 max-w-2xl mx-auto">
+        <h1 className="p-2 mb-2 text-xl text-center text-white bg-gray-800 rounded-t-lg border-b border-gray-200 sm:text-4xl">Use your full name and school code to login, and access your content</h1>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-4 w-full">
         <input
             type="text"
@@ -121,6 +122,7 @@ export default function LoginLearner() {
             {isSubmitting ? "Logging in..." : "Login"}
         </button>
         </form>
+        </div>
         </>
     );
 }

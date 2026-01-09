@@ -64,6 +64,7 @@ const LogUser = () => {
   };
 
   return (
+    <>
     <div className="flex flex-col px-4 mx-auto mt-4 w-full max-w-md">
       <div className="p-3 mx-auto mb-6 w-full bg-blue-700 rounded">
         <p className="text-sm font-bold leading-relaxed text-center sm:text-lg">
@@ -143,6 +144,7 @@ const LogUser = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 

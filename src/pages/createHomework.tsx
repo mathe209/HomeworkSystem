@@ -66,15 +66,16 @@ export default function CreateHomeworkPage() {
   return (
     <>
     <Navbar/>
-    <div className="container mt-20 mx-20">
-    <div className="">
+    <div className="mt-15 mx-5 sm:mx-10 md:mx-20 border border-black pb-10 p-5 rounded-lg bg-white shadow-md shadow-gray-600">
+    <div className="mb-2 text-sm text-gray-600">
       <strong>{me ? `Signed in as: ${me.name}` : "Not signed in"}</strong>
     </div>
-      <h2>Create Homework</h2>
+      <h2 className="text-2xl font-bold mb-4">Create Homework</h2>
+      <hr className="mb-2"/>
 
-      <form onSubmit={handleSubmit}>
-        <label>Subject</label>
-        <select value={subject} onChange={(e) => setSubject(e.target.value)}>
+      <form onSubmit={handleSubmit} className="p-3">
+        <label className="">Subject:</label>
+        <select className="border border-blue-500 mx-7" value={subject} onChange={(e) => setSubject(e.target.value)}>
           <option value="math">Math</option>
           <option value="science">Science</option>
           <option value="history">History</option>
@@ -88,6 +89,7 @@ export default function CreateHomeworkPage() {
           type="date"
           value={timeStamp}
           onChange={(e) => setTimeStamp(e.target.value)}
+          className="border border-black mx-5 p-2"
           required
         />
 
@@ -117,8 +119,10 @@ export default function CreateHomeworkPage() {
         <input value={answerFive} onChange={(e) => setAnswerFive(e.target.value)} required className='border border-black mx-5'/>
 
         <br /><br />
-
-        <button type="submit" disabled={isSubmitting}>
+        <button type="button" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-4" onClick={() => navigate("/teacherContent")}>
+          Cancel
+        </button>
+        <button type="submit" disabled={isSubmitting} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
           {isSubmitting ? "Saving..." : "Submit Homework"}
         </button>
       </form>

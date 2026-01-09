@@ -86,8 +86,8 @@ export default function CreateMcqPage() {
   return (
     <>
     <Navbar/>
-    <div className="border border-black sm:my-15 sm:mx-30 shadow-lg shadow-black rounded-lg">
-    <div className="mt-15 sm:mt-3 mx-10">
+    <div className="border border-black my-15 mx-5 sm:mx-10 md:mx-20 shadow-lg shadow-black rounded-lg">
+    <div className="mt-5 sm:mt-3 mx-10">
       <strong>{me ? `Signed in as: ${me.name}` : "Not signed in"}</strong>
     </div>
     <div className="mt-1 mx-10">

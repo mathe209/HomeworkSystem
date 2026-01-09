@@ -67,7 +67,7 @@ export default function UserCards() {
             ))}
             <section className="col-span-2 flex justify-center">
                 <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => changeToOtherPage('Student')}>Continue As a Student</button>
-                <button className="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => changeToOtherPage('Teacher')}>Continue Asa  Teacher</button>
+                <button className="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => changeToOtherPage('Teacher')}>Continue As a  Teacher</button>
             </section>
         </section>
         <div className="mt-5 text-left p-1">
