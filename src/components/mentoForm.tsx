@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function MentoForm() {
   const [mentorType, setMentorType] = useState("");
@@ -8,7 +9,7 @@ export default function MentoForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-
+  const navigate = useNavigate()
   // const AddMentor = async (e:any) => {
   //   e.preventDefault();
   //   try {
@@ -54,17 +55,17 @@ export default function MentoForm() {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:3000/mentorship", {
+      const response = await axios.post("https://www.evolvedmentality.co.za/api/mentorship", {
         mentorType,
         name,
         email,
         phone,
         message,
-      });
-      console.log(response.data);
-      if (response.status === 200) {
+      }, {withCredentials: true,});
+      //console.log(response.data);
+      if (response.status === 201) {
         alert("Mentorship successful!");
-        window.location.href = "/";
+        navigate("/");
       } else {
         alert(response.data.message || "Mentorship failed");
       }

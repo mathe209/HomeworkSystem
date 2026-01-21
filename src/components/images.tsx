@@ -1,7 +1,7 @@
-export default function Images({ images }) {
+export default function Images({ images }: { images: string[] }) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
-        {images.map((src, index) => (
+        {images.map((src:any, index:any) => (
           <div key={index} className="w-full overflow-hidden rounded-xl shadow-lg">
             <img
               src={src}

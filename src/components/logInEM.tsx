@@ -22,7 +22,7 @@ export default function LoginForm() {
       const response = await axios.post("https://evolvedmentality.co.za/api/login", {
         fullName,
         schoolCode,
-      });
+      }, {withCredentials: true,});
 
       console.log(response.data);
 

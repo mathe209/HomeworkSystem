@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,7 +8,7 @@ const logUser = async (fullName:string, schoolName:string, schoolCode:string) =>
       fullName: fullName,
       schoolName: schoolName,
       schoolCode: schoolCode,
-    });
+    }, {withCredentials: true,});
     console.log("User registered successfully:", response.data);
     return response.data;
   } catch (error:any) {
@@ -70,8 +70,8 @@ const LogUser = () => {
       </div>
       <form 
         onSubmit={handleSubmit} 
-        action="https://evolvedmentality.co.za/api/encldx"
-        method="POST"
+        // action="https://evolvedmentality.co.za/api/encldx"
+        // method="POST"
         className="flex flex-col space-y-4 w-full"
       >
         <input

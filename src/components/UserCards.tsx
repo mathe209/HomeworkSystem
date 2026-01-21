@@ -1,14 +1,18 @@
-function changeToOtherPage(userType:string){
-    if(userType === 'Student'){
-        //navigate to student page
-        window.location.href = '/studentDashboard';
-    }
-    else if(userType === 'Teacher'){
-        //navigate to teacher page
-        window.location.href = '/teacherDashboard';
-    }
-}
+import { useNavigate } from 'react-router-dom';
+
 export default function UserCards() {
+    const navigate = useNavigate();
+
+    function changeToOtherPage(userType:string){
+        if(userType === 'Student'){
+            //navigate to student page
+            navigate('/studentDashboard');
+        }
+        else if(userType === 'Teacher'){
+            //navigate to teacher page
+            navigate('/teacherDashboard');
+        }
+    }
     const TypeofUser:string[] = ['Student', 'Teacher'];
 
     // map each user type to its background image

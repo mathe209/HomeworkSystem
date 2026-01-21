@@ -19,14 +19,14 @@ export default function JoinForm(){
             return;
         }
         try {
-            const response = await axios.post("http://localhost:3000/membership", {
+            const response = await axios.post("https://www.evolvedmentality.co.za/api/membership", {
                 memberType,
                 name,
                 email,
                 phone,
                 userQuery,
                 message,
-            });
+            }, {withCredentials: true,});
             console.log(response.data);
             if (response.status === 201) {
                 alert("Membership application successful!");

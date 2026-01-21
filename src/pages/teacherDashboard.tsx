@@ -1,5 +1,7 @@
+import { useNavigate } from "react-router-dom"
 import Navbar from "../components/navbar"
 export default function TeacherDashboard() {
+    const navigate = useNavigate()
     return (
         <>
         <Navbar />
@@ -14,14 +16,14 @@ export default function TeacherDashboard() {
               <h2 className="text-xl font-bold mb-2">New User?</h2>
                 <p className="mb-4">If you are a new teacher, please refer to the instructions on the home page to get started.</p>
                 <section className="mb-4">
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => window.location.href = '/SignInTeacher'}>Sign Up</button>
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate('/SignInTeacher')}>Sign Up</button>
                 </section>
             </div>
             <div className="p-5 m-2 border border-gray-400 rounded">
                 <h2 className="text-xl font-bold mb-2">Existing User?</h2>
                 <p className="mb-4">Log in to create and manage homework assignments for your students.</p>
                 <section className="mb-4">
-                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => window.location.href = '/LogTeacherIn'}>Log In</button>
+                    <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => navigate('/LogTeacherIn')}>Log In</button>
                 </section>
             </div>
             </div>

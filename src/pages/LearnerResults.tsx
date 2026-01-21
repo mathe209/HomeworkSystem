@@ -2,13 +2,14 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 async function fetchLearnerResults(homeworkId: number) {
     try{
-        const response = await fetch(`http://localhost:3000/teacher/learner-results/${homeworkId}`, {
+        const response = await fetch(`https://www.evolvedmentality.co.za/api/teacher/learner-results/${homeworkId}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
+            }, credentials: "include"
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -72,6 +73,7 @@ export default function LearnerResults() {
     const [results, setResults] = useState<any[]>([]);
     const [error, setError] = useState("");
     const { me, loading } = useAuth();
+    const navigate = useNavigate()
 
     if (loading) {
         return <div>Loading...</div>;
@@ -147,10 +149,10 @@ export default function LearnerResults() {
             <div className="flex justify-center">
                 <button className="my-3 mx-5 bg-red-500 text-white px-4 py-2 rounded" onClick={() => {
                     localStorage.removeItem("token");
-                    window.location.href = '/';
+                    navigate('/');
                 }}>Log Out</button>
                 <button className="my-3 mx-5 bg-blue-500 text-white px-4 py-2 rounded" onClick={() => {
-                    window.location.href = '/teacherContent';
+                    navigate('/teacherContent');
                 }}>Back to Dashboard</button>
             </div>
             <Footer />

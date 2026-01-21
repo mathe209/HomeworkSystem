@@ -3,7 +3,7 @@ import Navbar from "../components/navbar"
 import FeatureCards from "../components/featureCards"
 import Mentoship from "../components/mentoship"
 import Socials from "../components/socials"
-{/*import LatestNewsletter from "../componets/newsletters"*/}
+import LatestNewsletter from "../components/newsletters"
 
 let features = [
     { title: 'Inspiration', desc: 'We aim to serve as the source of inspiration and encouragement to the young men with no exemplary, positive role models within their communities.' },
@@ -18,7 +18,8 @@ export default function Home1() {
             <div className="mt-15 m-5 sm:mx-10 md:mx-25 mb-10">
             <Hero />
             <FeatureCards features={features}/>
-            {/*<LatestNewsletter/>*/}
+            <h1 className="text-center text-lg sm:text-4xl font-bold my-3">Newsletter</h1>
+            <LatestNewsletter/>
             <Mentoship />
             </div>
             <Socials/>

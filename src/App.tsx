@@ -12,7 +12,9 @@ import CreateMcqPage from './pages/Create-mcq.tsx'
 import ShowHomeworks from './pages/manageHomeworks.tsx'
 import LogLearnerIn from './pages/LogLearnerIn.tsx'
 import StudentContentPage from './pages/studentContent.tsx'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import TeacherPdfUpload from './pages/createPdfHomework.tsx'
+import HomeworkView from './pages/pdfHomework.tsx'
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 
 import './App.css';
@@ -34,7 +36,7 @@ function App() {
   return (
     <>
     <AuthProvider>
-    <Router>
+    <HashRouter>
       <Routes>
         <Route path='/HomeworkHome' element={<Home />} />
         <Route path='/studentDashboard' element={<StudentDashboard />} />
@@ -56,6 +58,8 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/event" element={<Event />} />
         <Route path='/success' element={<Success />} />
+        <Route path='/createPdfHomework' element={<TeacherPdfUpload/>}/>
+        <Route path='/viewPdfHomework' element={<HomeworkView/>}/>
         {/*Encldx Routes */}
         <Route path="/encldx" element={<Encldx />} />
         <Route path="/success" element={<Success />} />
@@ -65,7 +69,7 @@ function App() {
         <Route path="/encldxAbout" element={<Aboutencldx />} />
         <Route path="/learnerResults" element={<LearnerResults />} />
       </Routes>
-    </Router>
+    </HashRouter>
     </AuthProvider>
     </>
   )

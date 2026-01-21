@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 import Navbar from "../components/navbar";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://www.evolvedmentality.co.za/api";
 
 //function that resets the token upon logging out
 function resetToken(){
@@ -61,7 +61,7 @@ export default function CreateMcqPage() {
       };
 
       await axios.post(`${API_BASE}/homework/mcq`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },withCredentials: true,
       });
 
       // Stay on same page -> add another MCQ

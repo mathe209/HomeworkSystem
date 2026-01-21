@@ -1,6 +1,7 @@
 import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type AnswerMap = Record<number, string>;
 
@@ -12,6 +13,7 @@ type Grade = {
 
 export default function StudentContent() {
   const { me, loading } = useAuth();
+  const navigate = useNavigate()
 
   const subjects = ["Math", "Science", "History"];
 
@@ -34,11 +36,11 @@ export default function StudentContent() {
 
     try {
       const response = await axios.get(
-        `http://localhost:3000/homework/${homeworkId}`,
+        `https://www.evolvedmentality.co.za/api/homework/${homeworkId}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          },withCredentials: true,
         }
       );
 
@@ -89,12 +91,12 @@ export default function StudentContent() {
             };
 
             const res = await axios.post(
-                "http://localhost:3000/homework/submit",
+                "https://www.evolvedmentality.co.za/api/homework/submit",
                 payload,
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, 
+                    },withCredentials: true,
                 }
             );
 
@@ -116,15 +118,15 @@ export default function StudentContent() {
 
     async function fetchGrade() {
       try {
-        const res = await axios.get("http://localhost:3000/LearnerResults", {
+        const res = await axios.get("https://www.evolvedmentality.co.za/api/LearnerResults", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          },withCredentials: true,
         });
 
         if (Array.isArray(res.data)) {
           setResults(res.data);
-          console.log("Fetched Results:", res.data);
+          //console.log("Fetched Results:", res.data);
         } else {
           setResults([]);
           console.warn("Unexpected response:", res.data);
@@ -254,8 +256,12 @@ export default function StudentContent() {
           )}
           <button className="my-6 mx-5 bg-red-500 text-white px-4 py-2 rounded" onClick={() => {
           localStorage.removeItem("token");
-          window.location.href = '/';
+          navigate('/');
         }}>Log Out</button>
+        <button className="my-6 mx-5 bg-red-500 text-white px-4 py-2 rounded" onClick={() => {
+          navigate("/viewPdfHomework")
+        }}
+        >View PDF Homework</button>
       </div>
 
       {grade && (

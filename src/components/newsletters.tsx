@@ -82,7 +82,7 @@ export default function LatestNewsletter() {
 
   if (showBoth) {
     return (
-      <div className="space-y-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
         {latest.monday && (
           <NewsletterCard newsletter={latest.monday} />
         )}
@@ -94,13 +94,14 @@ export default function LatestNewsletter() {
   }
 
   return <NewsletterCard newsletter={latest} />;
+  
 }
 
 function NewsletterCard({ newsletter }: { newsletter: any }) {
   return (
     <>
-    <h1 className="p-2 text-2xl font-bold text-center text-white rounded-t-lg border-b border-purple-600">Latest Newsletter</h1>
-    <div className="overflow-hidden mx-auto my-4 w-full max-w-3xl bg-white rounded-lg border border-purple-600 shadow-sm">
+    <div className="">
+    <div className="overflow-hidden mx-auto mb-5 w-full max-w-3xl bg-white rounded-lg border shadow-lg shadow-gray-600 h-full overflow-y-auto">
       {/* Image Section - Always on top */}
       <div className="w-full h-48 sm:h-64 md:h-80">
         <img 
@@ -132,6 +133,7 @@ function NewsletterCard({ newsletter }: { newsletter: any }) {
           </button>
         </div>
       </div>
+    </div>
     </div>
     </>
   );

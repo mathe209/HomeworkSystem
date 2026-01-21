@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 import Navbar from "../components/navbar";
 
-const API_BASE = "http://localhost:3000";
+const API_BASE = "https://www.evolvedmentality.co.za/api";
 
 export default function CreateHomeworkPage() {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export default function CreateHomeworkPage() {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        },
+        }, withCredentials: true,
       });
 
       // backend returns the created homework row, including its id

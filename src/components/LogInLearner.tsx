@@ -59,10 +59,10 @@ export default function LoginLearner() {
         try {
         setIsSubmitting(true);
 
-        const response = await axios.post("http://localhost:3000/LoginLearner", {
+        const response = await axios.post("https://www.evolvedmentality.co.za/api/LoginLearner", {
             name,
             password,
-        });
+        },{withCredentials: true,});
 
         console.log("this is the data from the response: " + response.data);
 
@@ -71,8 +71,8 @@ export default function LoginLearner() {
             //get the current logged user
             localStorage.setItem("token", token);
             console.log("Stored token:", token);
-            const meRes = await axios.get("http://localhost:3000/me", {
-                headers: { Authorization: `Bearer ${token}` },
+            const meRes = await axios.get("https://www.evolvedmentality.co.za/api/me", {
+                headers: { Authorization: `Bearer ${token}` ,},withCredentials: true
             });
             if (isUser(meRes.data)) {
                 setMe(meRes.data);

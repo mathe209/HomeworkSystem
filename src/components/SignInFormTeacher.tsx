@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const logUserTeacher = async (fullName:string, schoolName:string, email:string, Password:string) => {
   try {
-    const response = await axios.post("http://localhost:3000/SignInTeacher", {
+    const response = await axios.post("https://www.evolvedmentality.co.za/api/SignInTeacher", {
       fullName: fullName,
       schoolName: schoolName,
       email: email,
@@ -15,7 +15,7 @@ const logUserTeacher = async (fullName:string, schoolName:string, email:string, 
   } catch (error:any) {
     if (error.response) {
       console.error("Error response data:", error.response.data);
-      throw new Error(error.response.data.message || "An error occurred while registering");
+      throw new Error(error.response.data?.message || "An error occurred while registering");
     } else if (error.request) {
       console.error("No response received:", error.request);
       throw new Error("No response from server. Please check your connection.");
@@ -64,16 +64,14 @@ const LogUserTeacher = () => {
   };
 
   return (
-    <div className="flex flex-col px-4 mx-auto mt-4 w-full max-w-md">
-      <div className="p-3 mx-auto mb-6 w-full bg-blue-700 rounded">
+    <div className="border border-gray-400 p-5 rounded-lg bg-gray-100 max-w-2xl mx-auto">
+      <div className="p-3 mx-auto mb-6 w-full bg-gray-700 rounded text-white">
         <p className="text-sm font-bold leading-relaxed text-center sm:text-lg">
           Welcome to the program, Please enter the required details below
         </p>
       </div>
       <form 
         onSubmit={handleSubmit} 
-        action="http://localhost:3000/SignInTeacher"
-        method="POST"
         className="flex flex-col space-y-4 w-full"
       >
         <input

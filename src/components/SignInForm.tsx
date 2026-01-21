@@ -1,27 +1,32 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const logUser = async (fullName:string, schoolName:string, schoolGrade:string, Password:string) => {
   try {
-    const response = await axios.post("http://localhost:3000/SignIn", {
-      fullName: fullName,
-      schoolName: schoolName,
-      schoolGrade: schoolGrade,
-      Password: Password
+    const response = await axios.post("https://www.evolvedmentality.co.za/api/SignIn", {
+      fullName,
+      schoolName,
+      schoolGrade,
+      Password
+    }, {
+      withCredentials: true,
     });
-    console.log("User registered successfully:", response.data);
+    if (response.status === 201) console.log("User registered successfully:", response.data);
     return response.data;
-  } catch (error:any) {
-    if (error.response) {
-      console.error("Error response data:", error.response.data);
-      throw new Error(error.response.data.message || "An error occurred while registering");
-    } else if (error.request) {
-      console.error("No response received:", error.request);
-      throw new Error("No response from server. Please check your connection.");
+  } catch (err: any) {
+    if (err.response) {
+      // Server responded with a status outside 2xx
+      console.error("Server response:", err.response.status, err.response.data);
+      throw new Error(err.response.data?.message || `Server error ${err.response.status}`);
+    } else if (err.request) {
+      // No response received (network/CORS)
+      console.error("No response (network/CORS). Request:", err.request);
+      throw new Error("No response from server. Possible network or CORS issue.");
     } else {
-      console.error("Error:", error.message);
-      throw new Error("An error occurred while setting up the request");
+      // Something else happened
+      console.error("Request setup error:", err.message);
+      throw new Error(err.message || "Unexpected error");
     }
   }
 };
@@ -65,16 +70,14 @@ const LogUser = () => {
 
   return (
     <>
-    <div className="flex flex-col px-4 mx-auto mt-4 w-full max-w-md">
-      <div className="p-3 mx-auto mb-6 w-full bg-blue-700 rounded">
+    <div className="border border-gray-400 p-5 rounded-lg bg-gray-100 max-w-2xl mx-auto">
+      <div className="p-3 mx-auto mb-6 w-full bg-gray-700 rounded text-white">
         <p className="text-sm font-bold leading-relaxed text-center sm:text-lg">
           Welcome to the program, Please enter the required details below
         </p>
       </div>
       <form 
-        onSubmit={handleSubmit} 
-        action="http://localhost:3000/SignIn"
-        method="POST"
+        onSubmit={handleSubmit}
         className="flex flex-col space-y-4 w-full"
       >
         <input
